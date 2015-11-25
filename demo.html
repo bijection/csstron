@@ -1,0 +1,479 @@
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		body{
+			margin:0;
+			transition: .5s;
+		}
+		input {
+		    width: 700px;
+		    font-size: 40px;
+		    text-align: center;
+		    border: 0;
+		    border-radius: 5px;
+		    margin-left: auto;
+		    margin-right: auto;
+		    display: block;
+		    box-shadow: 0 3px 24px rgba(0, 0, 0, 0.14);
+		}
+		input:focus {
+			outline: none;
+		}
+		.full {
+			height: 50%;
+		    padding-top: 10%;
+			/*position: absolute;*/
+			margin-top:0;
+		}
+	</style>
+</head>
+<body>
+<div class='full'><input placeholder='type a color' oninput='setbgcolor(this.value)'></div>
+	
+<script>
+
+function sum(arr){
+	return arr.reduce((x,y)=>x+y)
+}
+
+function dot(a,b){
+	return sum(a.map((x,i)=>x*b[i]))
+}
+
+function response(input, layer){
+	return layer.b.map((b, i) => Math.tanh(b+dot(layer.w[i], input)) )
+}
+
+function predict(input, layers){
+	return [input].concat(layers).reduce(response)
+}
+
+var layas = [{'b': [-3.46529071, -0.81767172,  1.49791145, -7.22815122,  1.20248313,
+         -4.55135472, -1.89920555,  4.45571921,  3.25875871, -2.33763857,
+          1.94431626,  5.35070533,  3.35592305,  6.26216611, -2.21339536,
+         -5.84470311, -5.27655824,  1.97040278,  1.12409668,  5.33609098],
+  'w': [[ -2.89590862e+00,   5.33969298e-01,   7.76601320e+00,
+           -1.26122409e+01,  -3.96186194e+00,  -7.58253794e+00,
+           -1.43976169e+00,  -5.49477027e+00,  -1.40785968e+01,
+           -3.04154348e+00,  -1.19461395e+01,   5.88609698e+00,
+            4.23513359e+00,   4.37929091e+00,   1.57285303e+01,
+            3.19090793e+00,   1.11531641e+01,   8.62805403e+00,
+            9.05890926e+00,  -2.00643783e+00],
+         [ -1.05742582e+01,   2.62480997e+00,  -1.20087881e+00,
+            1.66973674e-01,  -9.57780276e+00,  -1.83416554e+00,
+           -6.91531704e+00,  -6.58376586e-01,   6.46878583e+00,
+            8.88081922e+00,   1.39253517e+00,  -8.26870340e+00,
+           -2.60149285e+00,  -4.49860174e+00,   3.51658691e+00,
+            1.78804407e+00,  -1.52038903e+01,  -3.00821788e+00,
+            1.53024654e+00,   2.72422593e+01],
+         [ -7.06053037e-01,   4.75074740e+00,  -8.70875452e-01,
+            7.74327660e-01,   1.84053549e-01,  -9.33145495e-01,
+           -5.72282148e+00,  -3.48161775e+00,   1.85759672e+00,
+           -1.24609449e+01,   5.35590479e+00,   6.85332401e+00,
+           -1.32821025e+01,  -2.30927017e+00,   7.83112476e-01,
+           -1.14557925e+00,   3.67031628e+00,  -1.39298202e+00,
+            3.20084698e+00,  -7.28863489e+00],
+         [ -1.97078227e+00,   1.83110470e+00,  -3.68785443e+01,
+            3.91540263e+00,  -3.55331911e+00,   1.22928962e+01,
+            1.07840068e+01,   3.95395274e+00,   1.92494985e+00,
+            4.07370638e+00,   1.08336786e+01,   8.52379510e+00,
+            4.00793908e+00,  -5.45535184e+00,   1.86859284e+00,
+            1.04118230e+01,  -1.53063518e+00,  -5.19528523e+00,
+            1.34587403e+01,  -3.74624715e+00],
+         [ -4.11112649e+00,   2.42849478e+00,   1.16531226e+00,
+           -1.78326146e+00,   8.58956455e+00,  -2.18270540e+00,
+            3.26275010e+00,   9.59038732e+00,   1.25483610e+01,
+            3.65466025e+00,   1.93821810e+00,   2.18235419e+00,
+           -8.67410869e+00,  -3.04483205e+00,  -5.00964303e+00,
+            1.88441556e+00,  -6.53460099e+00,  -2.62238097e+00,
+           -1.92767460e+00,  -5.23028502e+00],
+         [ -3.69548264e+00,  -2.06735136e+00,   9.19141877e+00,
+           -3.19649905e+00,  -4.49326462e+00,   1.33360964e+01,
+            8.27703476e+00,  -7.08478583e+00,   8.32214903e+00,
+           -1.74781858e+01,   1.39881657e+01,   2.40201439e+00,
+           -1.45084262e+00,  -8.77433155e+00,  -6.24756024e-02,
+            4.01179268e+00,   1.87292359e+00,   4.80632050e+00,
+           -8.86994171e+00,  -9.72081795e+00],
+         [  7.79760507e+00,  -2.55670968e+00,   3.22187485e+00,
+           -1.40531609e+00,  -2.58406486e+00,   2.50862470e+00,
+           -2.04177130e+00,  -1.63020223e+00,  -3.89719431e+00,
+            1.86678129e+00,  -3.62080155e+00,  -6.37321983e+00,
+           -2.21032876e+00,   3.28382340e-01,   3.27742038e+00,
+            1.74291525e+00,   7.35053015e-01,  -3.50416809e-01,
+            2.43571839e+00,   2.79987017e+00],
+         [  4.99138589e+00,   3.37322887e+00,   1.08518276e+01,
+            4.95195163e+00,   5.53667543e+00,  -2.97636974e+00,
+           -2.99056075e-01,  -4.79778874e+00,  -1.39825517e-01,
+            1.26627054e+00,  -4.27865192e+00,   2.77137996e+00,
+           -1.27476171e+01,  -1.84041281e-01,  -4.71920556e+00,
+           -4.88273023e+00,   5.02084168e-01,  -6.94908787e+00,
+           -9.84057557e+00,  -9.70000667e+00],
+         [ -8.81131218e+00,  -3.52686247e-01,  -4.31410250e+00,
+            7.97787213e+00,  -6.42838102e+00,  -1.24081385e+01,
+           -6.90790114e+00,  -2.28006047e+00,  -4.81499215e+00,
+            1.74945540e+00,  -2.79880505e+00,   3.80368902e+00,
+            2.50138657e+00,   2.09062446e+00,  -2.67529176e-02,
+           -1.49988307e+00,   7.12523911e+00,   1.29140222e+00,
+            3.79895641e+00,   4.93772961e+00],
+         [  4.06167664e+00,   2.84060361e+00,  -6.35784745e-01,
+            5.20612220e+00,   7.39839751e-01,   5.21941129e+00,
+           -4.28442566e-02,   1.03979353e+01,   1.07757538e+01,
+            4.04502426e+00,  -4.57700124e+00,   1.83156374e+00,
+           -4.19840161e+00,  -2.01571094e+00,   4.78073794e-01,
+            1.74328536e+00,  -9.02665600e+00,  -2.91674680e+00,
+           -1.07658681e+01,  -3.04634874e+00],
+         [ -7.74183248e+00,  -5.78788853e+00,  -3.82377247e+00,
+            4.42925586e+00,  -4.36404355e+00,  -3.18881955e+00,
+           -6.37850533e-01,   9.73828850e+00,   1.16334021e+00,
+           -3.59293986e+00,  -2.68419103e+00,   1.29962263e+00,
+           -7.18787779e-01,   8.70732731e-02,  -1.13599639e+00,
+           -3.70514684e+00,   4.38856665e+00,   8.45414724e+00,
+            1.16294165e+00,   3.76796198e+00],
+         [  9.04680859e-01,  -2.63458283e-01,   8.68148581e-01,
+           -7.54515521e-01,  -4.81821420e-01,   7.29480132e-02,
+           -1.55007537e-01,  -1.04324554e-01,  -1.94495794e-01,
+           -8.82617715e-01,  -5.41841160e-01,   1.16819917e+00,
+            5.67182017e-01,  -6.02320292e-01,   1.60918507e-01,
+           -6.83455937e-01,   9.47825059e-01,   1.42273717e-01,
+            9.58261401e-01,   3.09199409e-02],
+         [  9.79221586e+00,  -5.11252800e+00,   4.41840402e+00,
+            1.19325296e+01,  -2.66544420e+00,   7.54887556e+00,
+            1.19200804e+01,   1.12369663e+01,   3.33489040e-01,
+           -1.30793581e+01,   1.35567265e+01,  -9.18278007e+00,
+            1.11808689e-01,  -1.56479711e+01,  -1.36712388e+01,
+           -8.85282219e+00,  -7.19156467e+00,  -1.59506590e+01,
+           -1.64261902e+01,  -1.58942699e+01],
+         [  5.96620024e-01,  -1.63571531e-01,  -1.70264832e-01,
+            5.14790588e-01,   3.94848158e-01,   6.88077641e-01,
+           -3.47203265e-01,  -1.52516452e-01,  -1.88030450e-01,
+           -4.28179795e-01,   8.59860635e-01,   1.22466755e+00,
+           -1.14179815e+00,   1.16936985e+00,   1.88824847e+00,
+            2.77105507e-01,  -5.32122015e-01,  -7.13721217e-01,
+            3.65294584e-01,   3.49275191e-01],
+         [ -2.04072744e+00,  -1.02611039e+00,  -9.05554111e-01,
+            5.21463835e-01,   1.58921956e+00,   5.00493711e-01,
+           -3.21429558e-01,   4.50756191e-02,  -1.46522432e+00,
+           -2.69425688e-01,   1.18212251e+00,  -3.24249404e+00,
+           -9.25592082e-01,   1.51278891e+00,  -1.02997823e+00,
+            2.04007292e+00,   1.65662738e+00,  -1.23976025e+00,
+            9.69438303e-01,   1.35054811e+00],
+         [  6.55586197e-01,   1.81805701e-01,  -7.34550000e-01,
+            7.16832682e-01,   6.14514536e-02,  -1.15099901e+00,
+            9.25279041e-01,  -3.67187625e-01,   9.82513441e-01,
+            1.10203930e+00,  -6.58629068e-01,   7.97127973e-01,
+            1.92952825e-01,  -9.49958985e-02,  -2.45983992e-01,
+           -2.28970753e-02,   7.03178702e-01,   4.64689252e-01,
+            9.30225084e-01,   1.05435689e+00],
+         [ -1.85719511e-02,  -3.95238506e-02,   4.43618415e-01,
+           -3.23861427e-01,   1.13651693e+00,  -3.52966954e-01,
+           -4.00790599e-01,   4.05135769e-01,  -1.37987239e-01,
+           -1.25439179e+00,   3.46843261e-01,  -2.54870103e-01,
+            6.26637711e-01,  -1.75087767e+00,   1.37997312e-01,
+            1.81494048e-02,   4.59532936e-01,  -6.81963614e-01,
+           -1.02502229e+00,   6.25236554e-01],
+         [ -4.68942653e+00,   3.59003836e+00,   1.68669644e+00,
+           -1.32833242e+00,  -2.67235391e+00,   6.17375339e+00,
+           -1.89946576e+00,  -3.11278489e+00,   4.33555580e+00,
+           -5.50304998e+00,   7.88753891e+00,  -3.25610971e+00,
+           -2.95113496e-01,  -7.45120859e-01,   2.53312721e+00,
+            3.94533532e+00,   6.45660506e-01,   8.74308104e-02,
+            8.37983726e-02,  -1.50003874e+00],
+         [  2.04570488e+00,   2.99125759e+01,   1.80101478e+01,
+            1.56735233e+00,   1.81830809e+01,   6.81569427e+00,
+            1.36865985e+01,  -1.91406278e+01,  -1.39130806e+01,
+           -1.34385218e-02,   3.06673074e-01,   4.97045351e+00,
+           -1.05428941e+01,  -3.55534625e+00,  -1.17167696e+01,
+           -1.35846255e+01,  -1.10152249e+01,  -6.68819783e+00,
+            4.08669832e+00,  -3.52174333e+00],
+         [  8.98884823e-01,  -7.56783141e-01,   3.37120172e-01,
+           -4.46952385e-01,  -1.13217335e+00,  -3.97071378e-01,
+           -1.11463936e+00,   8.79624256e-01,  -3.25832892e-02,
+            7.69164651e-01,  -5.50934630e-01,  -9.60080369e-01,
+            2.11452109e-01,  -6.14531944e-01,   5.06280361e-01,
+           -9.10936368e-01,  -6.77345028e-01,   6.38340675e-01,
+           -2.16980911e-01,   9.06742378e-01]]},
+ {'b': [  2.77846764e-03,  -3.16315322e+00,  -5.15114663e+00,
+           1.49330649e+00,  -7.72049215e-01,   2.09379679e+00,
+           1.54811024e+00,   1.87877214e-01,   3.50310991e-02,
+          -1.54011030e+00],
+  'w': [[  1.12981590e+01,   7.98377731e+00,  -1.18836371e+01,
+           -4.28546037e-01,   1.13665582e+01,   4.46490802e+00,
+            4.27294156e+00,  -3.90824509e+00,   1.98800607e+01,
+            1.81339508e-01,  -8.92870021e+00,   1.18322037e+00,
+            1.26140411e+01,   1.10066081e+00,  -7.70125426e-01,
+           -1.57311977e+00,  -8.45525592e-01,  -5.43597614e+00,
+           -1.50963873e+00,   1.09302011e+00],
+         [  7.47670750e+00,  -5.60422943e+00,   1.55726323e+00,
+           -1.03784954e+01,   4.35422172e+00,   1.65152706e+01,
+           -4.05727826e+00,  -3.12988631e+00,   5.83061690e+00,
+            1.94602653e+00,   2.28711861e+00,  -2.18792062e+00,
+            4.18309402e-01,  -2.17507309e+00,   2.45212316e+00,
+            1.89139751e+00,   1.81180265e+00,   7.63434429e+00,
+           -4.85714873e+00,  -1.66134544e+00],
+         [  6.77293687e-01,  -2.27078358e+00,   4.92687861e-01,
+           -7.60458731e-01,  -2.09612502e+00,  -2.00858795e+01,
+            4.98081646e+00,   9.24073703e+00,   1.45883637e+00,
+            4.24719951e+00,  -5.17993984e-01,  -4.11818893e+00,
+            4.45366036e-01,  -3.67276867e+00,   5.77144286e+00,
+            4.53916030e+00,   4.37602137e+00,   5.19781789e+00,
+            4.41036875e+00,  -4.51410172e+00],
+         [  7.00112615e+00,   6.80022477e+00,   1.30001866e+01,
+            1.24986660e+00,   2.13573812e+00,  -2.62156380e+00,
+            5.77549615e+00,   3.73362868e+00,  -5.19759592e-01,
+           -4.21825768e+00,   8.74647068e-01,   1.22159144e+00,
+            2.79044164e-02,   5.71800153e-01,  -3.52962096e-04,
+           -1.02073655e+00,  -1.01887227e+00,  -1.18694204e+01,
+           -1.59517015e+00,   8.91750899e-01],
+         [  1.36561922e-01,  -3.26145238e-01,   5.38283791e-02,
+           -9.63088312e-01,   9.77758701e-01,  -3.05811217e+00,
+            2.19575133e+00,  -3.60507913e-01,   3.11495666e-01,
+           -3.13974409e-01,  -1.27494990e+00,  -2.49155534e-01,
+            1.38638355e-02,  -2.94470708e-01,  -1.03603318e+00,
+            7.44910873e-01,   1.05489495e+00,   3.83683992e-01,
+           -6.78168435e-02,  -6.67532929e-04],
+         [ -1.27629770e+00,  -3.32141567e-01,  -7.44817929e-01,
+           -1.45067399e+00,   2.33627135e+00,  -1.19369969e+00,
+           -2.09752515e+00,   2.38652426e+00,   1.44740801e+00,
+           -2.24739197e+00,   2.21237303e+00,   1.66154664e+00,
+           -1.10438911e+00,   1.72004766e+00,  -1.58276600e+00,
+           -1.60070330e+00,  -1.80978102e+00,   1.44236399e+00,
+            1.83346732e+00,   1.78384615e+00],
+         [  1.06956622e+01,   4.83291924e+00,  -9.41467027e-01,
+            8.84537265e+00,   1.64582665e+00,  -1.77797086e+01,
+           -5.09377888e+00,   1.59352788e+00,  -2.48506270e+00,
+           -3.33163034e+00,  -7.59701256e+00,   1.40651912e-01,
+            4.27080063e-01,   1.62924982e+00,   3.56697876e-02,
+           -1.33720884e+00,  -7.26443536e-01,   3.02880471e+00,
+           -7.31449393e+00,   1.55445391e+00],
+         [ -1.32945391e+00,  -6.04762584e-01,   2.33181805e-01,
+            5.85961907e+00,  -3.00457971e+00,   1.05868452e+01,
+           -2.00078085e+00,   1.87939564e+00,  -3.91214378e-01,
+           -1.73002249e+00,   4.98543841e+00,   1.14168481e-01,
+           -2.63320751e-01,   1.03722748e+00,  -1.74153350e+00,
+           -4.63093128e-01,  -5.34917998e-01,   1.28441065e+00,
+            2.04284985e+00,   1.18573609e+00],
+         [ -5.62060276e+00,   6.36002840e-01,   2.16178303e-01,
+           -5.80664130e-01,  -1.72692698e+00,   3.65923552e+00,
+            3.75677972e+00,   1.78105941e+00,   1.95627716e+00,
+           -1.15382929e+00,  -9.99240896e-01,  -1.42471109e+00,
+           -1.30099698e+00,  -1.23493265e+00,   4.97677757e-01,
+            1.69974075e+00,   1.70088587e+00,   5.82794024e+00,
+           -1.66626199e+00,  -1.23041314e+00],
+         [ -9.48982573e-01,  -2.39014114e-01,  -3.38088186e+00,
+           -1.79859011e+01,  -1.73713866e+01,   1.64452518e+01,
+            4.92103392e+00,   9.85411544e+00,   1.39565298e+00,
+            7.18010374e+00,   1.94336064e+01,  -3.51459426e+00,
+           -7.48126875e-01,  -2.50744425e+00,   3.78448238e+00,
+            2.98275320e+00,   3.02809397e+00,   5.02898362e+00,
+            5.47413669e+00,  -2.51393814e+00]]},
+ {'b': [-1.19518631,  3.38321645, -1.50983335],
+  'w': [[ -0.82815585,   0.39075524,   0.19791171,  -9.92016061,
+           -0.15462825,  -3.7185593 ,  13.43654181,  13.72183751,
+            2.40197057,   1.23258655],
+         [ -1.23694823,   0.40918131,   3.44729796,  -2.69329866,
+           -1.15351358,  -4.43795926,   1.27822422,  -0.13771459,
+           -2.35268979,   0.0311792 ],
+         [ -0.87002715,  -0.70369518,  -3.60305243,   4.57444051,
+            0.14107377,   3.68566081,   0.22904559,  -1.43587107,
+           -4.81442602,   6.2591545 ]]}]
+
+function ord(c){
+	return c.charCodeAt(0)
+}
+
+function vecfromcolor(c){
+	var ret = []
+    for(var i = 0; i< 20 ; i++){
+        var h = c[i%c.length]
+        ret[i] = (ord(h.toLowerCase()) - ord('a')) / ord('z')
+    }
+    return ret	
+}
+
+function vectorgb(v){
+	return 'rgb('+v.map(x=>Math.round(x*255)).join(',')+')'
+}
+
+
+function makecolorbox (color, truth) {
+	var m = document.createElement('div')
+	m.innerText = color
+	m.style.background = vectorgb(predict(vecfromcolor(color),layas))
+	m.style.height = 100
+	m.style.width = '50%'
+	m.style.float = 'left'
+
+	document.body.appendChild(m)
+
+	m = document.createElement('div')
+	m.style.background = truth
+	m.style.height = 100
+	m.style.width = '50%'
+	m.style.float = 'right'
+	document.body.appendChild(m)
+}
+
+	makecolorbox('AliceBlue', '#F0F8FF')
+	makecolorbox('AntiqueWhite', '#FAEBD7')
+	makecolorbox('Aqua', '#00FFFF')
+	makecolorbox('Aquamarine', '#7FFFD4')
+	makecolorbox('Azure', '#F0FFFF')
+	makecolorbox('Beige', '#F5F5DC')
+	makecolorbox('Bisque', '#FFE4C4')
+	makecolorbox('Black', '#000000')
+	makecolorbox('BlanchedAlmond', '#FFEBCD')
+	makecolorbox('Blue', '#0000FF')
+	makecolorbox('BlueViolet', '#8A2BE2')
+	makecolorbox('Brown', '#A52A2A')
+	makecolorbox('BurlyWood', '#DEB887')
+	makecolorbox('CadetBlue', '#5F9EA0')
+	makecolorbox('Chartreuse', '#7FFF00')
+	makecolorbox('Chocolate', '#D2691E')
+	makecolorbox('Coral', '#FF7F50')
+	makecolorbox('CornflowerBlue', '#6495ED')
+	makecolorbox('Cornsilk', '#FFF8DC')
+	makecolorbox('Crimson', '#DC143C')
+	makecolorbox('Cyan', '#00FFFF')
+	makecolorbox('DarkBlue', '#00008B')
+	makecolorbox('DarkCyan', '#008B8B')
+	makecolorbox('DarkGoldenRod', '#B8860B')
+	makecolorbox('DarkGray', '#A9A9A9')
+	makecolorbox('DarkGrey', '#A9A9A9')
+	makecolorbox('DarkGreen', '#006400')
+	makecolorbox('DarkKhaki', '#BDB76B')
+	makecolorbox('DarkMagenta', '#8B008B')
+	makecolorbox('DarkOliveGreen', '#556B2F')
+	makecolorbox('Darkorange', '#FF8C00')
+	makecolorbox('DarkOrchid', '#9932CC')
+	makecolorbox('DarkRed', '#8B0000')
+	makecolorbox('DarkSalmon', '#E9967A')
+	makecolorbox('DarkSeaGreen', '#8FBC8F')
+	makecolorbox('DarkSlateBlue', '#483D8B')
+	makecolorbox('DarkSlateGray', '#2F4F4F')
+	makecolorbox('DarkSlateGrey', '#2F4F4F')
+	makecolorbox('DarkTurquoise', '#00CED1')
+	makecolorbox('DarkViolet', '#9400D3')
+	makecolorbox('DeepPink', '#FF1493')
+	makecolorbox('DeepSkyBlue', '#00BFFF')
+	makecolorbox('DimGray', '#696969')
+	makecolorbox('DimGrey', '#696969')
+	makecolorbox('DodgerBlue', '#1E90FF')
+	makecolorbox('FireBrick', '#B22222')
+	makecolorbox('FloralWhite', '#FFFAF0')
+	makecolorbox('ForestGreen', '#228B22')
+	makecolorbox('Fuchsia', '#FF00FF')
+	makecolorbox('Gainsboro', '#DCDCDC')
+	makecolorbox('GhostWhite', '#F8F8FF')
+	makecolorbox('Gold', '#FFD700')
+	makecolorbox('GoldenRod', '#DAA520')
+	makecolorbox('Gray', '#808080')
+	makecolorbox('Grey', '#808080')
+	makecolorbox('Green', '#008000')
+	makecolorbox('GreenYellow', '#ADFF2F')
+	makecolorbox('HoneyDew', '#F0FFF0')
+	makecolorbox('HotPink', '#FF69B4')
+	makecolorbox('IndianRed', '#CD5C5C')
+	makecolorbox('Indigo', '#4B0082')
+	makecolorbox('Ivory', '#FFFFF0')
+	makecolorbox('Khaki', '#F0E68C')
+	makecolorbox('Lavender', '#E6E6FA')
+	makecolorbox('LavenderBlush', '#FFF0F5')
+	makecolorbox('LawnGreen', '#7CFC00')
+	makecolorbox('LemonChiffon', '#FFFACD')
+	makecolorbox('LightBlue', '#ADD8E6')
+	makecolorbox('LightCoral', '#F08080')
+	makecolorbox('LightCyan', '#E0FFFF')
+	makecolorbox('LightGoldenRodYellow', '#FAFAD2')
+	makecolorbox('LightGray', '#D3D3D3')
+	makecolorbox('LightGrey', '#D3D3D3')
+	makecolorbox('LightGreen', '#90EE90')
+	makecolorbox('LightPink', '#FFB6C1')
+	makecolorbox('LightSalmon', '#FFA07A')
+	makecolorbox('LightSeaGreen', '#20B2AA')
+	makecolorbox('LightSkyBlue', '#87CEFA')
+	makecolorbox('LightSlateGray', '#778899')
+	makecolorbox('LightSlateGrey', '#778899')
+	makecolorbox('LightSteelBlue', '#B0C4DE')
+	makecolorbox('LightYellow', '#FFFFE0')
+	makecolorbox('Lime', '#00FF00')
+	makecolorbox('LimeGreen', '#32CD32')
+	makecolorbox('Linen', '#FAF0E6')
+	makecolorbox('Magenta', '#FF00FF')
+	makecolorbox('Maroon', '#800000')
+	makecolorbox('MediumAquaMarine', '#66CDAA')
+	makecolorbox('MediumBlue', '#0000CD')
+	makecolorbox('MediumOrchid', '#BA55D3')
+	makecolorbox('MediumPurple', '#9370D8')
+	makecolorbox('MediumSeaGreen', '#3CB371')
+	makecolorbox('MediumSlateBlue', '#7B68EE')
+	makecolorbox('MediumSpringGreen', '#00FA9A')
+	makecolorbox('MediumTurquoise', '#48D1CC')
+	makecolorbox('MediumVioletRed', '#C71585')
+	makecolorbox('MidnightBlue', '#191970')
+	makecolorbox('MintCream', '#F5FFFA')
+	makecolorbox('MistyRose', '#FFE4E1')
+	makecolorbox('Moccasin', '#FFE4B5')
+	makecolorbox('NavajoWhite', '#FFDEAD')
+	makecolorbox('Navy', '#000080')
+	makecolorbox('OldLace', '#FDF5E6')
+	makecolorbox('Olive', '#808000')
+	makecolorbox('OliveDrab', '#6B8E23')
+	makecolorbox('Orange', '#FFA500')
+	makecolorbox('OrangeRed', '#FF4500')
+	makecolorbox('Orchid', '#DA70D6')
+	makecolorbox('PaleGoldenRod', '#EEE8AA')
+	makecolorbox('PaleGreen', '#98FB98')
+	makecolorbox('PaleTurquoise', '#AFEEEE')
+	makecolorbox('PaleVioletRed', '#D87093')
+	makecolorbox('PapayaWhip', '#FFEFD5')
+	makecolorbox('PeachPuff', '#FFDAB9')
+	makecolorbox('Peru', '#CD853F')
+	makecolorbox('Pink', '#FFC0CB')
+	makecolorbox('Plum', '#DDA0DD')
+	makecolorbox('PowderBlue', '#B0E0E6')
+	makecolorbox('Purple', '#800080')
+	makecolorbox('Red', '#FF0000')
+	makecolorbox('RosyBrown', '#BC8F8F')
+	makecolorbox('RoyalBlue', '#4169E1')
+	makecolorbox('SaddleBrown', '#8B4513')
+	makecolorbox('Salmon', '#FA8072')
+	makecolorbox('SandyBrown', '#F4A460')
+	makecolorbox('SeaGreen', '#2E8B57')
+	makecolorbox('SeaShell', '#FFF5EE')
+	makecolorbox('Sienna', '#A0522D')
+	makecolorbox('Silver', '#C0C0C0')
+	makecolorbox('SkyBlue', '#87CEEB')
+	makecolorbox('SlateBlue', '#6A5ACD')
+	makecolorbox('SlateGray', '#708090')
+	makecolorbox('SlateGrey', '#708090')
+	makecolorbox('Snow', '#FFFAFA')
+	makecolorbox('SpringGreen', '#00FF7F')
+	makecolorbox('SteelBlue', '#4682B4')
+	makecolorbox('Tan', '#D2B48C')
+	makecolorbox('Teal', '#008080')
+	makecolorbox('Thistle', '#D8BFD8')
+	makecolorbox('Tomato', '#FF6347')
+	makecolorbox('Turquoise', '#40E0D0')
+	makecolorbox('Violet', '#EE82EE')
+	makecolorbox('Wheat', '#F5DEB3')
+	makecolorbox('White', '#FFFFFF')
+	makecolorbox('WhiteSmoke', '#F5F5F5')
+	makecolorbox('Yellow', '#FFFF00')
+	makecolorbox('YellowGreen', '#9ACD32')
+
+
+function setbgcolor(color){
+	if (color.length) {
+		document.body.style.background = vectorgb(predict(vecfromcolor(color),layas))
+	}
+}
+
+
+console.log(vectorgb(predict(vecfromcolor('red'),layas)))
+
+  </script>
+
+</body>
+</html>
+
